@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
 import {
   Phone, Mail, MapPin, Clock, Sparkles, Stethoscope, Smile, ShieldCheck,
-  Award, GraduationCap, ChevronRight, Calendar, ArrowRight, MessageCircle,
+  Award, GraduationCap, ChevronRight, Calendar, ArrowRight, MessageCircle, Star, Quote,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import receptionImg from "@/assets/clinic/reception.jpg";
@@ -41,15 +41,62 @@ const expertise = [
   "Braces — Wire & Self-Ligating", "Invisible Aligners", "Tooth Jewellery",
 ];
 
+const reviews = [
+  {
+    name: "Vikram Sharma",
+    role: "Local Guide",
+    rating: 5,
+    text: "Dr. Prashanth is amazing! I had a complex wisdom tooth extraction and it was completely painless. The staff is very professional and the clinic is super clean.",
+    date: "1 month ago"
+  },
+  {
+    name: "Priyanka N.",
+    role: "Verified Patient",
+    rating: 5,
+    text: "Best dental clinic in the area. They use very high-tech equipment and explain the procedure clearly. Highly recommend for any dental issues.",
+    date: "2 weeks ago"
+  },
+  {
+    name: "Arjun Reddy",
+    role: "Verified Patient",
+    rating: 5,
+    text: "Very satisfied with my root canal treatment. The doctor is very experienced and gentle. Minimal waiting time as well.",
+    date: "3 months ago"
+  },
+  {
+    name: "Sneha Kapur",
+    role: "Patient",
+    rating: 5,
+    text: "Extremely hygienic and professional clinic. Had a great experience with teeth whitening here. The results are fantastic!",
+    date: "5 days ago"
+  },
+  {
+    name: "Rohan Das",
+    role: "Local Guide",
+    rating: 5,
+    text: "Most professional dentist I have ever visited. They really care about patient comfort. The clinic interior is very soothing too.",
+    date: "1 month ago"
+  },
+  {
+    name: "Meera Iyer",
+    role: "Verified Patient",
+    rating: 5,
+    text: "Prompt service and excellent care. I've been coming here for a year and won't go anywhere else. Five stars for Dr. Prashanth!",
+    date: "2 months ago"
+  }
+];
+
 function Index() {
   const [activeService, setActiveService] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    const serviceInterval = setInterval(() => {
       setActiveService((prev) => (prev + 1) % services.length);
     }, 2000);
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(serviceInterval);
+    };
   }, []);
 
   return (
@@ -74,7 +121,7 @@ function Index() {
             </div>
           </a>
           <div className="hidden items-center gap-10 text-sm font-medium md:flex">
-            {["About", "Meet the Doctor", "Clinic", "Services", "Contact"].map((item) => (
+            {["About", "Meet the Doctor", "Clinic", "Services", "Reviews", "Contact"].map((item) => (
               <a 
                 key={item} 
                 href={`#${item.toLowerCase().replace(/\s+/g, '-')}`} 
@@ -498,6 +545,64 @@ function Index() {
               </motion.li>
             ))}
           </motion.ul>
+        </div>
+      </section>
+
+      {/* REVIEWS SECTION */}
+      <section id="reviews" className="lighting-bg relative z-10 border-y border-border/60 py-16 lg:py-24" style={{ background: "var(--gradient-soft)" }}>
+        <div className="mx-auto max-w-7xl px-6">
+          <motion.div 
+            {...fadeInUp}
+            className="mb-12 flex flex-col items-center text-center"
+          >
+            <div className="flex items-center gap-3">
+              <span className="h-px w-8 bg-primary" />
+              <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-primary">Patient Stories</span>
+              <span className="h-px w-8 bg-primary" />
+            </div>
+            <h2 className="mt-6 font-display text-4xl font-semibold leading-tight md:text-5xl">What Our Patients Say</h2>
+            <div className="mt-4 flex items-center justify-center gap-2">
+              <div className="flex text-yellow-400">
+                {[...Array(5)].map((_, i) => <Star key={i} className="h-5 w-5 fill-current" />)}
+              </div>
+              <span className="text-sm font-bold">5.0 (23) Google Reviews</span>
+            </div>
+          </motion.div>
+
+          <div className="relative overflow-hidden py-4 w-full">
+            <div 
+              className="flex gap-6 w-max"
+              style={{ animation: `marquee ${reviews.length * 2}s linear infinite` }}
+            >
+              {[...reviews, ...reviews].map((review, idx) => (
+                <div 
+                  key={idx}
+                  className="glass-card flex w-[300px] md:w-[400px] shrink-0 flex-col rounded-[2rem] p-8 shadow-sm whitespace-normal transition-transform hover:-translate-y-2 hover:scale-[1.02]"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex text-yellow-500">
+                      {[...Array(review.rating)].map((_, i) => (
+                        <Star key={i} className="h-4 w-4 fill-current" />
+                      ))}
+                    </div>
+                    <Quote className="h-8 w-8 text-primary/10" />
+                  </div>
+                  <p className="mt-6 text-sm font-medium italic leading-relaxed text-muted-foreground lg:text-base">
+                    "{review.text}"
+                  </p>
+                  <div className="mt-8 flex items-center gap-4">
+                    <div className="h-10 w-10 overflow-hidden rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
+                      {review.name.charAt(0)}
+                    </div>
+                    <div className="text-left">
+                      <h4 className="text-sm font-bold leading-none">{review.name}</h4>
+                      <p className="mt-1 text-[10px] uppercase tracking-wider text-muted-foreground/60">{review.role} · {review.date}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
