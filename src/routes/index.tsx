@@ -1,9 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState, useEffect, useRef } from "react";
 import {
   Phone, Mail, MapPin, Clock, Sparkles, Stethoscope, Smile, ShieldCheck,
-  Award, GraduationCap, ChevronRight, Calendar, ArrowRight,
+  Award, GraduationCap, ChevronRight, Calendar, ArrowRight, MessageCircle,
 } from "lucide-react";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
+import receptionImg from "@/assets/clinic/reception.jpg";
 import heroImg from "@/assets/clinic-hero.jpg";
 import doctorImg from "@/assets/doctor.jpg";
 import logoImg from "@/assets/clinic/logo.png";
@@ -40,6 +42,16 @@ const expertise = [
 ];
 
 function Index() {
+  const [activeService, setActiveService] = useState(0);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveService((prev) => (prev + 1) % services.length);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="min-h-screen bg-background font-sans text-foreground selection:bg-primary/20 selection:text-primary">
       {/* NAV */}
@@ -87,27 +99,78 @@ function Index() {
       </motion.header>
 
       {/* HERO */}
-      <section id="top" className="lighting-bg grain-overlay relative overflow-hidden px-6 pb-24 pt-20 lg:pb-40 lg:pt-32">
+      <section id="top" className="lighting-bg grain-overlay relative overflow-hidden px-6 pb-16 pt-12 lg:pb-24 lg:pt-20">
         {/* Background Dental Motif */}
-        <div className="absolute right-0 top-0 -z-0 h-full w-full pointer-events-none select-none overflow-hidden">
+        <div className="absolute inset-0 -z-0 h-full w-full pointer-events-none select-none overflow-hidden">
           <motion.div 
-            initial={{ opacity: 0, scale: 1.2, x: 100 }}
-            animate={{ opacity: 0.03, scale: 1, x: 0 }}
+            initial={{ opacity: 0, scale: 1.05 }}
+            animate={{ opacity: 0.15, scale: 1 }}
             transition={{ duration: 2.5, ease: "easeOut" }}
-            className="absolute -right-[5%] -top-[10%] w-[70%] h-[120%] flex items-start justify-end"
+            className="absolute inset-0 w-full h-full"
+          >
+            <img 
+              src={receptionImg} 
+              alt="" 
+              className="h-full w-full object-cover" 
+              style={{ 
+                maskImage: "radial-gradient(ellipse at 70% 40%, black, transparent 80%)",
+                WebkitMaskImage: "radial-gradient(ellipse at 70% 40%, black, transparent 80%)",
+                filter: "grayscale(20%) contrast(115%) mix-blend-mode-overlay"
+              }}
+            />
+          </motion.div>
+          
+          {/* Pro Live Effect: Animated Teeth Logo */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
+            animate={{ 
+              opacity: [0.03, 0.08, 0.03],
+              scale: [1.2, 1.3, 1.2],
+              rotate: [0, 3, -2, 0],
+              y: [0, -30, 0]
+            }}
+            transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-0 right-[-10%] h-[120%] w-[80%] flex items-center justify-end overflow-hidden mix-blend-screen"
             style={{ 
-              maskImage: "radial-gradient(circle at 70% 30%, black 20%, transparent 80%)",
-              WebkitMaskImage: "radial-gradient(circle at 70% 30%, black 20%, transparent 80%)"
+              maskImage: "radial-gradient(ellipse at center, black 40%, transparent 80%)",
+              WebkitMaskImage: "radial-gradient(ellipse at center, black 40%, transparent 80%)"
             }}
           >
             <img 
               src={logoImg} 
               alt="" 
-              className="h-full w-auto object-contain grayscale invert brightness-0" 
+              className="h-[120%] w-auto object-contain grayscale opacity-80 brightness-150 drop-shadow-[0_0_80px_rgba(var(--primary),0.8)] filter blur-[3px]" 
             />
           </motion.div>
-          <div className="absolute inset-0 bg-gradient-to-l from-background via-transparent to-background/40" />
-          <div className="absolute inset-0 bg-ambient-glow opacity-50" />
+
+          {/* Animated Lighting Orbs */}
+          <motion.div 
+            animate={{ 
+              scale: [1, 1.2, 1],
+              opacity: [0.3, 0.5, 0.3],
+              x: [0, 50, 0]
+            }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute -top-1/4 -left-1/4 h-[800px] w-[800px] rounded-full bg-primary/20 blur-[120px]" 
+          />
+          <motion.div 
+            animate={{ 
+              scale: [1, 1.5, 1],
+              opacity: [0.2, 0.4, 0.2],
+              x: [0, -50, 0]
+            }}
+            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+            className="absolute -bottom-1/4 -right-1/4 h-[600px] w-[600px] rounded-full bg-primary-glow/20 blur-[100px]" 
+          />
+          <motion.div 
+            animate={{ 
+              opacity: [0.1, 0.25, 0.1],
+            }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+            className="absolute top-1/4 right-1/4 h-[400px] w-[400px] rounded-full bg-accent/10 blur-[80px]" 
+          />
+
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-background/10" />
         </div>
 
         <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-2 relative z-10">
@@ -204,7 +267,7 @@ function Index() {
       </section>
 
       {/* ABOUT */}
-      <section id="about" className="lighting-bg relative z-10 border-y border-border/60 py-24 lg:py-32" style={{ background: "var(--gradient-soft)" }}>
+      <section id="about" className="lighting-bg relative z-10 border-y border-border/60 py-16 lg:py-24" style={{ background: "var(--gradient-soft)" }}>
         <div className="mx-auto grid max-w-7xl items-start gap-16 px-6 lg:grid-cols-5">
           <motion.div 
             {...fadeInUp}
@@ -248,7 +311,7 @@ function Index() {
       </section>
 
       {/* MEET THE DOCTOR */}
-      <section id="meet-the-doctor" className="mx-auto max-w-7xl px-6 py-24 lg:py-40">
+      <section id="meet-the-doctor" className="mx-auto max-w-7xl px-6 py-16 lg:py-24">
         <div className="grid items-center gap-16 lg:grid-cols-2">
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
@@ -264,13 +327,27 @@ function Index() {
                 className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-primary/40 via-transparent to-transparent pointer-events-none" />
+              {/* Subtle sweeping light beam */}
+              <motion.div 
+                animate={{
+                  x: ["-200%", "200%"]
+                }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  repeatDelay: 5,
+                  ease: "easeInOut"
+                }}
+                className="absolute inset-0 z-10 w-[50%] skew-x-12 bg-gradient-to-r from-transparent via-white/5 to-transparent pointer-events-none"
+                style={{ mixBlendMode: "overlay" }}
+              />
             </div>
             <motion.div 
               whileHover={{ rotate: -5, scale: 1.05 }}
-              className="absolute -right-8 -top-8 flex flex-col items-center rounded-3xl bg-primary px-8 py-7 text-primary-foreground shadow-2xl ring-4 ring-background"
+              className="absolute -right-4 -top-4 flex flex-col items-center rounded-2xl bg-primary px-4 py-3 text-primary-foreground shadow-2xl ring-2 ring-background"
             >
-              <div className="font-display text-5xl font-bold leading-none">18+</div>
-              <div className="mt-1 text-[11px] font-bold uppercase tracking-[0.2em] opacity-80">Years Exp</div>
+              <div className="font-display text-2xl font-bold leading-none">18+</div>
+              <div className="mt-0.5 text-[8px] font-bold uppercase tracking-[0.1em] opacity-80">Years Exp</div>
             </motion.div>
           </motion.div>
           
@@ -283,7 +360,7 @@ function Index() {
               <span className="h-0.5 w-8 bg-primary" />
               <span className="text-[11px] font-bold uppercase tracking-[0.4em] text-primary">Chief Surgeon</span>
             </div>
-            <h2 className="mt-6 font-display text-6xl font-semibold leading-tight text-glow md:text-7xl">Dr. Prashanth L</h2>
+            <h2 className="mt-6 font-display text-4xl font-semibold leading-tight text-glow md:text-5xl">Dr. Prashanth L</h2>
             <p className="mt-4 text-base font-bold italic tracking-wide text-muted-foreground">MDS (Oral & Maxillofacial Surgery) · BDS</p>
 
             <div className="mt-10 space-y-8 text-lg leading-relaxed text-muted-foreground lg:text-xl">
@@ -325,13 +402,13 @@ function Index() {
         whileInView={{ opacity: 1 }}
         transition={{ duration: 1 }}
         id="clinic-tour" 
-        className="pb-24 lg:pb-32"
+        className="pb-16 lg:pb-24"
       >
         <ClinicTour />
       </motion.section>
 
       {/* SERVICES */}
-      <section id="services" className="border-y border-border/60 bg-muted/30 py-24 lg:py-40">
+      <section id="services" className="border-y border-border/60 bg-muted/30 py-16 lg:py-24">
         <div className="mx-auto max-w-7xl px-6">
           <motion.div 
             {...fadeInUp}
@@ -346,36 +423,52 @@ function Index() {
             <p className="max-w-xs text-muted-foreground">Expert solutions for everything from root canals to full-mouth rehabilitation.</p>
           </motion.div>
 
-          <motion.div 
-            variants={staggerContainer}
-            initial="initial"
-            whileInView="whileInView"
-            viewport={{ once: true }}
-            className="mt-20 grid gap-6 md:grid-cols-2 lg:grid-cols-4"
-          >
-            {services.map(({ icon: Icon, title, desc }) => (
-              <motion.article 
-                key={title} 
-                variants={fadeInUp}
-                whileHover={{ y: -8 }}
-                className="group glass-card relative flex flex-col rounded-[2.5rem] p-10 shadow-sm transition-all hover:shadow-card hover:ring-2 hover:ring-primary/20"
-              >
-                <div className="mb-6 grid h-14 w-14 place-items-center rounded-2xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                  <Icon className="h-7 w-7" />
-                </div>
-                <h3 className="font-display text-2xl font-semibold">{title}</h3>
-                <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{desc}</p>
-                <div className="mt-8 flex items-center gap-2 font-display text-xs font-bold uppercase tracking-widest text-primary opacity-0 transition-all group-hover:opacity-100">
-                  Read More <ArrowRight className="h-3 w-3" />
-                </div>
-              </motion.article>
-            ))}
-          </motion.div>
+          <div className="relative mt-20 overflow-hidden py-10 px-4">
+            <motion.div 
+              animate={{ x: `calc(-${activeService * 100}% - ${activeService * 1.5}rem)` }}
+              transition={{ duration: 0.8, ease: [0.32, 0.72, 0, 1] }}
+              className="flex gap-6"
+            >
+              {services.map(({ icon: Icon, title, desc }, idx) => (
+                <motion.article 
+                  key={title} 
+                  initial={{ opacity: 0.5, scale: 0.9 }}
+                  animate={{ 
+                    opacity: activeService === idx ? 1 : 0.4,
+                    scale: activeService === idx ? 1 : 0.95,
+                  }}
+                  className="group glass-card relative flex min-w-full flex-col rounded-[2.5rem] p-8 shadow-sm transition-all hover:ring-2 hover:ring-primary/20 md:min-w-[450px] lg:min-w-[400px] lg:p-12"
+                >
+                  <div className="mb-6 grid h-14 w-14 place-items-center rounded-2xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                    <Icon className="h-7 w-7" />
+                  </div>
+                  <h3 className="font-display text-3xl font-semibold">{title}</h3>
+                  <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{desc}</p>
+                  <div className="mt-8 flex items-center gap-2 font-display text-xs font-bold uppercase tracking-widest text-primary">
+                    Specialized Treatment <ArrowRight className="h-3 w-3" />
+                  </div>
+                </motion.article>
+              ))}
+            </motion.div>
+
+            {/* Pagination Dots */}
+            <div className="mt-10 flex justify-center gap-3">
+              {services.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setActiveService(idx)}
+                  className={`h-1.5 transition-all duration-300 rounded-full ${
+                    activeService === idx ? "w-8 bg-primary" : "w-1.5 bg-muted-foreground/30 hover:bg-muted-foreground/50"
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
       {/* EXPERTISE LIST */}
-      <section className="mx-auto max-w-7xl px-6 py-24 lg:py-32">
+      <section className="mx-auto max-w-7xl px-6 py-16 lg:py-24">
         <div className="grid gap-16 lg:grid-cols-5">
           <motion.div {...fadeInUp} className="lg:col-span-2">
             <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-primary">Our Expertise</span>
@@ -415,7 +508,7 @@ function Index() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 1 }}
-          className="relative mx-auto max-w-7xl px-6 py-24 text-primary-foreground lg:py-40"
+          className="relative mx-auto max-w-7xl px-6 py-16 text-primary-foreground lg:py-24"
         >
           <div className="grid gap-20 lg:grid-cols-2">
             <div>
@@ -496,6 +589,37 @@ function Index() {
           </div>
         </div>
       </footer>
+
+      {/* FLOATING ACTIONS */}
+      <div className="fixed bottom-6 left-6 md:left-auto md:right-6 z-[100] flex flex-col items-start md:items-end gap-4 pointer-events-none">
+        {/* Book Now Button */}
+        <motion.a 
+          href="tel:+919980609894"
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="pointer-events-auto group relative flex items-center gap-3 rounded-full bg-primary px-6 py-4 text-sm font-bold text-primary-foreground shadow-2xl hover:bg-primary/90 transition-all"
+        >
+          <Calendar className="h-5 w-5" />
+          <span className="relative">Book</span>
+        </motion.a>
+
+        {/* WhatsApp Button */}
+        <motion.a 
+          href="https://wa.me/919980609894"
+          target="_blank"
+          rel="noopener noreferrer"
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.1 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          className="pointer-events-auto group relative flex h-16 w-16 items-center justify-center rounded-full bg-[#25D366] text-white shadow-2xl"
+        >
+          <MessageCircle className="relative h-8 w-8 fill-current" />
+        </motion.a>
+      </div>
     </div>
   );
 }
